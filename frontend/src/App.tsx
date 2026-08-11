@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import ReadingTable from "./components/ReadingTable";
+import SensorChart from "./components/SensorChart";
 
 type SensorReading = {
   id: number;
@@ -207,6 +208,7 @@ function App() {
             </div>
           </article>
         </section>
+        <SensorChart />
         <ReadingTable />
       </main>
   );
