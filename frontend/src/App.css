@@ -356,3 +356,88 @@ tbody tr:hover {
   place-items: center;
   color: #94a3b8;
 }
+.alert-panel {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  border: 1px solid;
+  border-radius: 16px;
+  padding: 18px 20px;
+}
+
+.alert-normal {
+  border-color: #064e3b;
+  background: rgba(6, 78, 59, 0.25);
+}
+
+.alert-warning {
+  border-color: #92400e;
+  background: rgba(120, 53, 15, 0.28);
+}
+
+.alert-icon {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.alert-normal .alert-icon {
+  background: #064e3b;
+  color: #6ee7b7;
+}
+
+.alert-warning .alert-icon {
+  background: #92400e;
+  color: #fcd34d;
+}
+
+.alert-content {
+  flex: 1;
+}
+
+.alert-content .eyebrow {
+  margin-bottom: 5px;
+}
+
+.alert-message,
+.alert-messages p {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+}
+
+.alert-messages {
+  display: grid;
+  gap: 4px;
+}
+
+.alert-warning .alert-messages p {
+  color: #fde68a;
+}
+
+.alert-limits {
+  display: grid;
+  gap: 5px;
+  color: #94a3b8;
+  font-size: 0.72rem;
+  text-align: right;
+}
+
+@media (max-width: 650px) {
+  .alert-panel {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .alert-limits {
+    width: 100%;
+    margin-left: 54px;
+    text-align: left;
+  }
+}
