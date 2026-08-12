@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import ReadingTable from "./components/ReadingTable";
 import SensorChart from "./components/SensorChart";
-import ThresholdAlert from "./components/ThresholdAlert";
+import AlertPanel from "./components/AlertPanel";
 
 type SensorReading = {
   id: number;
@@ -90,7 +90,7 @@ function App() {
               {error}
             </div>
         )}
-        <ThresholdAlert reading={reading} />
+        <AlertPanel />
         <section className="metric-grid">
           <article className="metric-card">
             <span className="metric-label">Temperature</span>

@@ -11,15 +11,23 @@ import java.util.Optional;
 public class SensorReadingService {
 
     private final SensorReadingRepository sensorReadingRepository;
+    private final AlertService alertService;
 
     public SensorReadingService(
-            SensorReadingRepository sensorReadingRepository
+            SensorReadingRepository sensorReadingRepository,
+            AlertService alertService
     ) {
         this.sensorReadingRepository = sensorReadingRepository;
+        this.alertService = alertService;
     }
 
     public SensorReading save(SensorReading reading) {
-        return sensorReadingRepository.save(reading);
+        SensorReading savedReading =
+                sensorReadingRepository.save(reading);
+
+        alertService.evaluate(savedReading);
+
+        return savedReading;
     }
 
     public List<SensorReading> findAll() {
