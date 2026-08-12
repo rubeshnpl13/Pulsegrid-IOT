@@ -27,51 +27,115 @@ public class AlertService {
         List<AlertEvent> createdAlerts = new ArrayList<>();
 
         if (reading.getTemperature() > TEMPERATURE_LIMIT) {
-            AlertEvent temperatureAlert = new AlertEvent(
-                    reading.getId(),
+            createTemperatureAlertIfNeeded(reading)
+                    .ifPresent(createdAlerts::add);
+        } else {
+            resolveAlerts(
                     reading.getDeviceId(),
-                    "TEMPERATURE_HIGH",
-                    "Temperature is high: "
-                            + reading.getTemperature()
-                            + " °C",
-                    reading.getTemperature(),
-                    TEMPERATURE_LIMIT,
-                    reading.getTimestamp()
-            );
-
-            createdAlerts.add(
-                    alertEventRepository.save(temperatureAlert)
+                    "TEMPERATURE_HIGH"
             );
         }
 
         if (reading.getHumidity() > HUMIDITY_LIMIT) {
-            AlertEvent humidityAlert = new AlertEvent(
-                    reading.getId(),
+            createHumidityAlertIfNeeded(reading)
+                    .ifPresent(createdAlerts::add);
+        } else {
+            resolveAlerts(
                     reading.getDeviceId(),
-                    "HUMIDITY_HIGH",
-                    "Humidity is high: "
-                            + reading.getHumidity()
-                            + " %",
-                    reading.getHumidity(),
-                    HUMIDITY_LIMIT,
-                    reading.getTimestamp()
-            );
-
-            createdAlerts.add(
-                    alertEventRepository.save(humidityAlert)
+                    "HUMIDITY_HIGH"
             );
         }
 
         return createdAlerts;
     }
 
+    private Optional<AlertEvent> createTemperatureAlertIfNeeded(
+            SensorReading reading
+    ) {
+        List<AlertEvent> existingAlerts =
+                alertEventRepository
+                        .findAllByDeviceIdAndAlertTypeAndResolvedFalse(
+                                reading.getDeviceId(),
+                                "TEMPERATURE_HIGH"
+                        );
+
+        if (!existingAlerts.isEmpty()) {
+            return Optional.empty();
+        }
+
+        AlertEvent alert = new AlertEvent(
+                reading.getId(),
+                reading.getDeviceId(),
+                "TEMPERATURE_HIGH",
+                "Temperature is high: "
+                        + reading.getTemperature()
+                        + " °C",
+                reading.getTemperature(),
+                TEMPERATURE_LIMIT,
+                reading.getTimestamp()
+        );
+
+        return Optional.of(
+                alertEventRepository.save(alert)
+        );
+    }
+
+    private Optional<AlertEvent> createHumidityAlertIfNeeded(
+            SensorReading reading
+    ) {
+        List<AlertEvent> existingAlerts =
+                alertEventRepository
+                        .findAllByDeviceIdAndAlertTypeAndResolvedFalse(
+                                reading.getDeviceId(),
+                                "HUMIDITY_HIGH"
+                        );
+
+        if (!existingAlerts.isEmpty()) {
+            return Optional.empty();
+        }
+
+        AlertEvent alert = new AlertEvent(
+                reading.getId(),
+                reading.getDeviceId(),
+                "HUMIDITY_HIGH",
+                "Humidity is high: "
+                        + reading.getHumidity()
+                        + " %",
+                reading.getHumidity(),
+                HUMIDITY_LIMIT,
+                reading.getTimestamp()
+        );
+
+        return Optional.of(
+                alertEventRepository.save(alert)
+        );
+    }
+
+    private void resolveAlerts(
+            String deviceId,
+            String alertType
+    ) {
+        List<AlertEvent> unresolvedAlerts =
+                alertEventRepository
+                        .findAllByDeviceIdAndAlertTypeAndResolvedFalse(
+                                deviceId,
+                                alertType
+                        );
+
+        for (AlertEvent alert : unresolvedAlerts) {
+            alert.setResolved(true);
+            alertEventRepository.save(alert);
+        }
+    }
+
     public List<AlertEvent> findAll() {
-        return alertEventRepository.findAllByOrderByCreatedAtDesc();
+        return alertEventRepository
+                .findAllByOrderByCreatedAtDesc();
     }
 
     public List<AlertEvent> findActive() {
         return alertEventRepository
-                .findByAcknowledgedFalseOrderByCreatedAtDesc();
+                .findByResolvedFalseAndAcknowledgedFalseOrderByCreatedAtDesc();
     }
 
     public Optional<AlertEvent> acknowledge(Long id) {

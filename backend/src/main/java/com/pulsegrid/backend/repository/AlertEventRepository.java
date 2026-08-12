@@ -5,9 +5,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface AlertEventRepository extends JpaRepository<AlertEvent, Long> {
+public interface AlertEventRepository
+        extends JpaRepository<AlertEvent, Long> {
 
     List<AlertEvent> findAllByOrderByCreatedAtDesc();
 
-    List<AlertEvent> findByAcknowledgedFalseOrderByCreatedAtDesc();
+    List<AlertEvent>
+    findByResolvedFalseAndAcknowledgedFalseOrderByCreatedAtDesc();
+
+    List<AlertEvent>
+    findAllByDeviceIdAndAlertTypeAndResolvedFalse(
+            String deviceId,
+            String alertType
+    );
 }

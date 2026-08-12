@@ -71,6 +71,7 @@ function AlertPanel() {
         }
     }
 
+
     return (
         <section
             className={`alert-panel ${
@@ -79,74 +80,64 @@ function AlertPanel() {
                     : "alert-panel-normal"
             }`}
         >
-            <div className="alert-panel-header">
-                <div>
-                    <p className="eyebrow">
-                        {alerts.length > 0
-                            ? "Active alerts"
-                            : "Alert status"}
+            <div className="alert-summary">
+                <div className="alert-panel-header">
+                    <div>
+                        <p className="eyebrow">
+                            {alerts.length > 0
+                                ? "Active alerts"
+                                : "Alert status"}
+                        </p>
+
+                        <h3>
+                            {alerts.length > 0
+                                ? `${alerts.length} active alert${
+                                    alerts.length === 1 ? "" : "s"
+                                }`
+                                : "All conditions normal"}
+                        </h3>
+                    </div>
+
+                    <div className="alert-panel-icon">
+                        {alerts.length > 0 ? "!" : "✓"}
+                    </div>
+                </div>
+
+                {error && (
+                    <p className="alert-api-error">
+                        {error}
                     </p>
+                )}
 
-                    <h3>
-                        {alerts.length > 0
-                            ? `${alerts.length} active alert${
-                                alerts.length === 1 ? "" : "s"
-                            }`
-                            : "All conditions normal"}
-                    </h3>
-                </div>
-
-                <div className="alert-panel-icon">
-                    {alerts.length > 0 ? "!" : "✓"}
-                </div>
+                {alerts.length === 0 && !error ? (
+                    <p className="alert-panel-message">
+                        No unacknowledged alerts are currently stored.
+                    </p>
+                ) : null}
             </div>
 
-            {error && (
-                <p className="alert-api-error">
-                    {error}
-                </p>
-            )}
-
-            {alerts.length === 0 && !error ? (
-                <p className="alert-panel-message">
-                    No unacknowledged alerts are currently stored.
-                </p>
-            ) : (
+            {alerts.length > 0 ? (
                 <div className="alert-list">
                     {alerts.map((alert) => (
-                        <article
-                            className="alert-item"
-                            key={alert.id}
-                        >
+                        <article className="alert-item" key={alert.id}>
                             <div className="alert-item-content">
                                 <strong>{alert.alertType}</strong>
-
                                 <p>{alert.message}</p>
-
                                 <span>
-                  {alert.deviceId} ·{" "}
-                                    {new Date(
-                                        alert.createdAt
-                                    ).toLocaleTimeString()}
-                </span>
+                {alert.deviceId} ·{" "}
+                                    {new Date(alert.createdAt).toLocaleTimeString()}
+              </span>
                             </div>
 
                             <div className="alert-item-actions">
                                 <div className="alert-values">
-                  <span>
-                    Actual: {alert.actualValue}
-                  </span>
-
-                                    <span>
-                    Limit: {alert.thresholdValue}
-                  </span>
+                                    <span>Actual: {alert.actualValue}</span>
+                                    <span>Limit: {alert.thresholdValue}</span>
                                 </div>
 
                                 <button
                                     type="button"
-                                    onClick={() =>
-                                        acknowledgeAlert(alert.id)
-                                    }
+                                    onClick={() => acknowledgeAlert(alert.id)}
                                 >
                                     Acknowledge
                                 </button>
@@ -154,7 +145,7 @@ function AlertPanel() {
                         </article>
                     ))}
                 </div>
-            )}
+            ) : null}
         </section>
     );
 }

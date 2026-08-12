@@ -31,6 +31,7 @@ public class AlertEvent {
     private Instant createdAt;
 
     private boolean acknowledged;
+    private boolean resolved;
 
     protected AlertEvent() {
     }
@@ -52,6 +53,7 @@ public class AlertEvent {
         this.thresholdValue = thresholdValue;
         this.createdAt = createdAt;
         this.acknowledged = false;
+        this.resolved = false;
     }
 
     public Long getId() {
@@ -124,5 +126,12 @@ public class AlertEvent {
 
     public void setAcknowledged(boolean acknowledged) {
         this.acknowledged = acknowledged;
+    }
+    public boolean isResolved() {
+        return resolved;
+    }
+
+    public void setResolved(boolean resolved) {
+        this.resolved = resolved;
     }
 }
